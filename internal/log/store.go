@@ -30,21 +30,21 @@ func newStore(f *os.File) (*store, error) {
 	}, nil
 }
 
-func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
+func (s *store) Append(content []byte) (n uint64, pos uint64, err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	position := s.size
-	if err := binary.Write(s.buf, enc, uint64(len(p))); err != nil {
+	startingPosition := s.size
+	if err := binary.Write(s.buf, enc, uint64(len(content))); err != nil {
 		return 0, 0, err
 	}
 
-	w, err := s.buf.Write(p)
+	writtenBytes, err := s.buf.Write(content)
 	if err != nil {
 		return 0, 0, err
 	}
-	convertedW := uint64(lendWidth + w)
-	s.size += convertedW
-	return convertedW, position, nil
+	totalWrittenBytes := uint64(lendWidth + writtenBytes)
+	s.size += totalWrittenBytes
+	return totalWrittenBytes, startingPosition, nil
 }
 
 func (s *store) Read(pos uint64) ([]byte, error) {
