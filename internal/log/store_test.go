@@ -80,7 +80,6 @@ func TestStoreClose(t *testing.T) {
 	_, afterSize, err := openFile(f.Name())
 	require.NoError(t, err)
 	require.True(t, afterSize > beforeSize)
-
 }
 
 func openFile(name string) (file *os.File, size int64, err error) {
